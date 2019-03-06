@@ -2,6 +2,7 @@ package com.alandunne.audiofiles.controllers;
 
 import com.alandunne.audiofiles.model.AudioFile;
 import com.alandunne.audiofiles.service.FileStorageService;
+import com.google.common.collect.Streams;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
@@ -19,6 +20,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -41,6 +43,26 @@ public class AudioFileController {
                 .contentType(MediaType.parseMediaType(file.getContentType()))
                 .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + file.getFilename() + "\"")
                 .body(new ByteArrayResource(file.getContent()));
+    }
+
+    @GetMapping()
+    @ResponseBody
+    public List<UploadFileResponse> getAllFiles() {
+
+        final Iterator<AudioFile> files = fileStorageService.findAll();
+
+        return Streams.stream(files)
+                .map(
+                        f -> {
+                            String s = ServletUriComponentsBuilder.fromCurrentContextPath()
+                                .path(BASE_PATH + "/downloadFile/")
+                                .path(f.getId())
+                                .toUriString();
+
+                            return new UploadFileResponse(f.getFilename(), s, f.getContentType(), 1);}
+                        ).collect(Collectors.toList());
+
+
     }
 
     @PostMapping

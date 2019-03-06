@@ -10,6 +10,8 @@ var multipleFileUploadInput = document.querySelector('#multipleFileUploadInput')
 var multipleFileUploadError = document.querySelector('#multipleFileUploadError');
 var multipleFileUploadSuccess = document.querySelector('#multipleFileUploadSuccess');
 
+var listFilesDiv = document.querySelector('#listFilesDiv');
+
 function uploadSingleFile(file) {
     var formData = new FormData();
     formData.append("file", file);
@@ -83,3 +85,39 @@ multipleUploadForm.addEventListener('submit', function(event){
     uploadMultipleFiles(files);
     event.preventDefault();
 }, true);
+
+function listFiles() {
+
+    // var formData = new FormData();
+    // for(var index = 0; index < files.length; index++) {
+    //     formData.append("files", files[index]);
+    // }
+
+    var xhr = new XMLHttpRequest();
+    xhr.open("GET", "/api/audio-files");
+
+    xhr.onload = function() {
+        console.log(xhr.responseText);
+        var response = JSON.parse(xhr.responseText);
+
+        if(xhr.status == 200) {
+
+            listFilesDiv.style.display = "none";
+            var content = "<p>List all files...</p>";
+            for(var i = 0; i < response.length; i++) {
+                content += "<p>Filename: " + response[i].filename + " - <a href='" + response[i].fileDownloadUri + "' target='_blank'>" + response[i].fileDownloadUri + "</a></p>";
+            }
+
+            listFilesDiv.innerHTML = content;
+            listFilesDiv.style.display = "block";
+        } else {
+            listFilesDiv.style.display = "none";
+            listFilesDiv.innerHTML = (response && response.message) || "Some Error Occurred";
+        }
+
+    }
+
+    xhr.send(null);
+}
+
+listFiles();

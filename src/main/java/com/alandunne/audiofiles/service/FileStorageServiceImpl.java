@@ -36,15 +36,16 @@ public class FileStorageServiceImpl implements FileStorageService {
         return save;
     }
 
-    @Override
-    public Iterator<AudioFile> getAllFiles() {
-        final Iterable<AudioFile> all = fileRepository.findAll();
-        return all.iterator();
-    }
 
     @Override
     public AudioFile findById(final String id) {
         return fileRepository.findById(id).orElseThrow(() -> new RuntimeException(String.format("No file found for ID %s", id)));
+    }
+
+    @Override
+    public Iterator<AudioFile> findAll() {
+        final Iterable<AudioFile> all = fileRepository.findAll();
+        return all.iterator();
     }
 
 }

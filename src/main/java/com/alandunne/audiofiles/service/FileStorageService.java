@@ -9,8 +9,8 @@ public interface FileStorageService {
 
     AudioFile store(MultipartFile file);
 
-    Iterator<AudioFile> getAllFiles();
-
     AudioFile findById(String id);
+
+    Iterator<AudioFile> findAll();
 
 }
