@@ -21,10 +21,10 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping(AudioFileStorageController.BASE_PATH)
-public class AudioFileStorageController {
+@RequestMapping(FileStorageController.BASE_PATH)
+public class FileStorageController {
 
-    static final String BASE_PATH = "/audio-files/system";
+    static final String BASE_PATH = "/file-storage";
 
     @Autowired
     @Qualifier("fileStorageService")
@@ -34,7 +34,7 @@ public class AudioFileStorageController {
     public String listUploadedFiles(Model model) {
 
         model.addAttribute("files", storageService.loadAll().map(
-                path -> MvcUriComponentsBuilder.fromMethodName(AudioFileStorageController.class, "serveFile", path.getFileName().toString()).build().toString())
+                path -> MvcUriComponentsBuilder.fromMethodName(FileStorageController.class, "serveFile", path.getFileName().toString()).build().toString())
                 .collect(Collectors.toList()));
 
         return "uploadForm";
