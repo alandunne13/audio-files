@@ -1,4 +1,4 @@
-package com.alandunne.audiofiles.service;
+package com.alandunne.audiofiles.service.exception;
 
 import java.io.IOException;
 

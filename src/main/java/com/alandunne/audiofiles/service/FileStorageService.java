@@ -1,22 +1,19 @@
 package com.alandunne.audiofiles.service;
 
-import com.alandunne.audiofiles.config.StorageProperties;
+import com.alandunne.audiofiles.service.exception.StorageException;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.stereotype.Service;
-import org.springframework.util.FileSystemUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.annotation.PostConstruct;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.stream.Stream;
 
@@ -24,12 +21,8 @@ import java.util.stream.Stream;
 @Slf4j
 public class FileStorageService implements StorageService {
 
-	private final Path rootLocation;
-
-	@Autowired
-	public FileStorageService(StorageProperties properties) {
-		this.rootLocation = Paths.get(properties.getLocation());
-	}
+	@Value("${files.dir}")
+	private Path rootLocation;
 
 	@Override
 	public void store(MultipartFile file) {
@@ -74,6 +67,7 @@ public class FileStorageService implements StorageService {
 
 	@Override
 	public Resource loadAsResource(String filename) {
+
 		try {
 			Path file = load(filename);
 			Resource resource = new UrlResource(file.toUri());
@@ -85,8 +79,8 @@ public class FileStorageService implements StorageService {
 						"Could not read file: " + filename);
 
 			}
-		}
-		catch (MalformedURLException e) {
+
+		} catch (MalformedURLException e) {
 			throw new RuntimeException("Could not read file: " + filename, e);
 		}
 	}
