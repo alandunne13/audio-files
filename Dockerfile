@@ -1,9 +1,7 @@
-FROM openjdk:8-jdk-alpine
-VOLUME /tmp
-VOLUME /audio
-ARG DEPENDENCY=target/dependency
-COPY ${DEPENDENCY}/BOOT-INF/lib /app/lib
-COPY ${DEPENDENCY}/META-INF /app/META-INF
-COPY ${DEPENDENCY}/BOOT-INF/classes /app
-ENTRYPOINT ["java","-cp","app:app/lib/*","com.alandunne.audiofiles.AudioFilesApplication"]
-EXPOSE 8080
+FROM openjdk:8-jre-alpine
+
+ENTRYPOINT ["/usr/bin/java", "-jar", "/tmp/app/app.jar"]
+
+ADD target/lib           /tmp/app/lib
+ARG JAR_FILE
+ADD target/${JAR_FILE} /tmp/app/app.jar
